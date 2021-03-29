@@ -1,4 +1,4 @@
-module github.com/Astrier/chainlink
+module github.com/smartcontractkit/chainlink
 
 go 1.15
 
