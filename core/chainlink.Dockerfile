@@ -62,6 +62,17 @@ RUN make chainlink-build
 
 # Final layer: ubuntu with chainlink binary
 FROM quay.io/spivegin/tlmbasedebian
+ENV DINIT=1.2.4 \
+    DEBIAN_FRONTEND=noninteractive \
+    PROXY_PASSWORD=7tkjmbvgpoeqrzyius4hafHdc9x3w \
+    PROXY_DOMAIN=""
+ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.4/dumb-init_${DINIT}_amd64.deb /tmp/dumb-init.deb
+
+RUN apt-get update && apt upgrade -y &&\
+    apt-get install -y apt-transport-https gnupg2 curl proxychains psmisc nano procps lsof && \
+    dpkg -i /tmp/dumb-init.deb &&\
+    apt-get autoclean && apt-get autoremove &&\
+    rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /root/*
 
 ARG CHAINLINK_USER=root
 ENV DEBIAN_FRONTEND noninteractive
@@ -75,5 +86,7 @@ USER ${CHAINLINK_USER}
 WORKDIR /home/${CHAINLINK_USER}
 
 EXPOSE 6688
-ENTRYPOINT ["chainlink"]
-CMD ["local", "node"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["chainlink"]
+# ENTRYPOINT ["chainlink"]
+# CMD ["local", "node"]
