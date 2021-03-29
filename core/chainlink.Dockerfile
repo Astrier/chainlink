@@ -61,7 +61,7 @@ COPY packr packr
 RUN make chainlink-build
 
 # Final layer: ubuntu with chainlink binary
-FROM ubuntu:18.04
+FROM quay.io/spivegin/tlmbasedebian
 
 ARG CHAINLINK_USER=root
 ENV DEBIAN_FRONTEND noninteractive
