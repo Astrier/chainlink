@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 
 	"github.com/pkg/errors"
@@ -35,10 +34,6 @@ func (auth TerminalKeyStoreAuthenticator) Authenticate(store *store.Store, passw
 	passwordProvided := len(password) != 0
 	interactive := auth.Prompter.IsTerminal()
 	hasAccounts := store.KeyStore.HasAccounts()
-	pwd := os.Getenv("CHAINLINK_STORE_PASSWORD")
-	if len(pwd) != 0 {
-		password = pwd
-	}
 
 	if passwordProvided && hasAccounts {
 		return auth.unlockExistingWithPassword(store, password)
@@ -120,29 +115,15 @@ func (auth TerminalKeyStoreAuthenticator) promptExistingPassword(store *store.St
 }
 
 func (auth TerminalKeyStoreAuthenticator) promptNewPassword(store *store.Store) (string, error) {
-
 	for {
-		var password, passwordConfirmation string
-		pwd := os.Getenv("CHAINLINK_STORE_PASSWORD")
-		if pwd != "" {
-			password = pwd
-		} else {
-			password = auth.Prompter.PasswordPrompt("New key store password: ")
-		}
-
+		password := auth.Prompter.PasswordPrompt("New key store password: ")
 		err := auth.validatePasswordStrength(store, password)
 		if err != nil {
 			return password, err
 		}
 
 		clearLine()
-		if pwd != "" {
-			passwordConfirmation = pwd
-		} else {
-			passwordConfirmation = auth.Prompter.PasswordPrompt("Confirm password: ")
-		}
-
-		passwordConfirmation = auth.Prompter.PasswordPrompt("Confirm password: ")
+		passwordConfirmation := auth.Prompter.PasswordPrompt("Confirm password: ")
 		clearLine()
 		if password != passwordConfirmation {
 			fmt.Printf("Passwords don't match. Please try again... ")
