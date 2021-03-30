@@ -32,11 +32,6 @@ func NewTerminalPrompter() Prompter {
 // Prompt displays the prompt for the user to enter the password and
 // reads their input.
 func (tp terminalPrompter) Prompt(prompt string) string {
-	var pwd string
-	pwd = os.Getenv("CHAINLINK_PASSWORD")
-	if pwd != "" {
-		return strings.TrimSpace(pwd)
-	}
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print(prompt)
 	line, err := reader.ReadString('\n')
@@ -50,11 +45,6 @@ func (tp terminalPrompter) Prompt(prompt string) string {
 // PasswordPrompt displays the prompt for the user to enter the password and
 // reads their input.
 func (tp terminalPrompter) PasswordPrompt(prompt string) string {
-	var pwd string
-	pwd = os.Getenv("CHAINLINK_PASSWORD")
-	if pwd != "" {
-		return strings.TrimSpace(pwd)
-	}
 	var rval string
 	withTerminalResetter(func() {
 		fmt.Print(prompt)
