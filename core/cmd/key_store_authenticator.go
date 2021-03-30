@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/pkg/errors"
@@ -34,6 +35,11 @@ func (auth TerminalKeyStoreAuthenticator) Authenticate(store *store.Store, passw
 	passwordProvided := len(password) != 0
 	interactive := auth.Prompter.IsTerminal()
 	hasAccounts := store.KeyStore.HasAccounts()
+	var pwd string
+	pwd = os.Getenv("CHAINLINK_STORE_PASSWORD")
+	if pwd != "" {
+		password = pwd
+	}
 
 	if passwordProvided && hasAccounts {
 		return auth.unlockExistingWithPassword(store, password)
@@ -115,6 +121,7 @@ func (auth TerminalKeyStoreAuthenticator) promptExistingPassword(store *store.St
 }
 
 func (auth TerminalKeyStoreAuthenticator) promptNewPassword(store *store.Store) (string, error) {
+
 	for {
 		password := auth.Prompter.PasswordPrompt("New key store password: ")
 		err := auth.validatePasswordStrength(store, password)
