@@ -63,9 +63,8 @@ RUN make chainlink-build
 # Final layer: ubuntu with chainlink binary
 FROM quay.io/spivegin/tlmbasedebian
 ENV DINIT=1.2.4 \
-    DEBIAN_FRONTEND=noninteractive \
-    PROXY_PASSWORD=7tkjmbvgpoeqrzyius4hafHdc9x3w \
-    PROXY_DOMAIN=""
+    DEBIAN_FRONTEND=noninteractive 
+    
 ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.4/dumb-init_${DINIT}_amd64.deb /tmp/dumb-init.deb
 
 RUN apt-get update && apt upgrade -y &&\
